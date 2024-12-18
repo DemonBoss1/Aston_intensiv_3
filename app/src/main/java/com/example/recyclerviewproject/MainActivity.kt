@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerviewproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,8 @@ import retrofit2.create
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var adapter = UserListAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -26,7 +29,18 @@ class MainActivity : AppCompatActivity() {
             .build()
         val dataApi = retrofit.create(DataApi::class.java)
         CoroutineScope(Dispatchers.IO).launch {
-            binding.textApp.text = dataApi.getData().toString()
+            val dataList = dataApi.getData()
+            runOnUiThread {
+                binding.apply {
+                    adapter.submitList(dataList)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        binding.apply {
+            userRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            userRecyclerView.adapter = adapter
         }
     }
 }
