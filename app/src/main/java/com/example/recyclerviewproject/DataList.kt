@@ -4,16 +4,18 @@ class DataList {
     private var userList: MutableList<UserWithId> = mutableListOf()
 
     companion object {
-        private var dataList = lazy {
+        private val dataList by lazy {
             DataList()
         }
+        val userList: List<UserWithId> = dataList.userList
 
-        fun listIsEmpty() = dataList.value.userList.isEmpty()
+        fun listIsEmpty() = dataList.userList.isEmpty()
 
-        fun updateList(newList: List<UserWithId>) = with(dataList.value) {
+        fun updateList(newList: List<UserWithId>) = with(dataList) {
             if (userList.isEmpty()) userList += newList
         }
-
-        fun getList() = dataList.value.userList
+        fun addUser(user: UserWithId) {
+            dataList.userList.add(user)
+        }
     }
 }

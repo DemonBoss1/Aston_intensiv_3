@@ -8,11 +8,7 @@ import com.example.recyclerviewproject.databinding.UserItemBinding
 
 class UserListAdapter : RecyclerView.Adapter<UserListAdapter.UserItemHolder>() {
 
-    init {
-        userListAdapter = this
-    }
-
-    private var userList: List<UserWithId> = DataList.getList()
+    private var userList: List<UserWithId> = DataList.userList
 
     class UserItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = UserItemBinding.bind(itemView)
@@ -33,13 +29,5 @@ class UserListAdapter : RecyclerView.Adapter<UserListAdapter.UserItemHolder>() {
 
     override fun onBindViewHolder(holder: UserItemHolder, position: Int) {
         holder.bind(userList[position])
-    }
-
-    companion object{
-        private var userListAdapter: UserListAdapter? = null
-
-        fun updateAdapter(){
-            userListAdapter?.notifyDataSetChanged()
-        }
     }
 }

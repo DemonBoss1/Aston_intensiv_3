@@ -31,7 +31,9 @@ class MainActivity : AppCompatActivity() {
             userRecyclerView.adapter = adapter
 
             addButton.setOnClickListener {
+                val lastUser = DataList.userList.last()
                 val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
+                intent.putExtra("Id", lastUser.Id + 1)
                 startActivity(intent)
             }
         }
