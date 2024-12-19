@@ -2,10 +2,8 @@ package com.example.recyclerviewproject
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerviewproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -13,11 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var adapter = UserListAdapter()
+    private lateinit var adapter: UserListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,17 +23,24 @@ class MainActivity : AppCompatActivity() {
 
         create()
 
+        adapter = UserListAdapter{
+            transition(it.id)
+        }
         binding.apply {
             userRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
             userRecyclerView.adapter = adapter
 
             addButton.setOnClickListener {
                 val lastUser = DataList.userList.last()
-                val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
-                intent.putExtra("Id", lastUser.Id + 1)
-                startActivity(intent)
+                transition(lastUser.Id + 1)
             }
         }
+    }
+
+    fun transition(Id: Int) {
+        val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
+        intent.putExtra("Id", Id)
+        startActivity(intent)
     }
 
     fun create() {
