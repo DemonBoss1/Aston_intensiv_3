@@ -2,7 +2,7 @@ package com.example.recyclerviewproject
 
 data class UserWithId(
     val Id: Int,
-    val FirstName: String,
-    val LastName: String,
-    val Phone: String
+    var FirstName: String,
+    var LastName: String,
+    var Phone: String
 )
