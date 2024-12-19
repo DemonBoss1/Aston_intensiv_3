@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +38,14 @@ class MainActivity : AppCompatActivity() {
                 val lastUser = DataList.userList.last()
                 transition(lastUser.Id + 1)
             }
+            resetButton.setOnClickListener {
+                adapter.turnOfEditingMode()
+                binding.apply {
+                    addButton.visibility = View.VISIBLE
+                    resetButton.visibility = View.GONE
+                    deleteButton.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -48,7 +57,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete -> {
-                Toast.makeText(this,"Delete",Toast.LENGTH_LONG).show()
+                adapter.enableEditingMode()
+                binding.apply {
+                    addButton.visibility = View.GONE
+                    resetButton.visibility = View.VISIBLE
+                    deleteButton.visibility = View.VISIBLE
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
