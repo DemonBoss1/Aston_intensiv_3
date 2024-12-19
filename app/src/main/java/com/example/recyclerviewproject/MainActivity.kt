@@ -23,24 +23,39 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.randomdatatools.ru")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val dataApi = retrofit.create(DataApi::class.java)
-        CoroutineScope(Dispatchers.IO).launch {
-            val dataList = dataApi.getData()
-            runOnUiThread {
-                binding.apply {
-                    adapter.submitList(dataList)
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        }
+        create()
 
         binding.apply {
             userRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
             userRecyclerView.adapter = adapter
+        }
+    }
+
+    fun create() {
+        if (DataList.listIsEmpty()) {
+            val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.randomdatatools.ru")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val dataApi = retrofit.create(DataApi::class.java)
+            CoroutineScope(Dispatchers.IO).launch {
+                val list = dataApi.getData()
+                val userList = list.mapIndexed { index, user ->
+                    UserWithId(
+                        Id = index,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Phone = user.Phone
+                    )
+                }
+                DataList.updateList(userList)
+                runOnUiThread {
+                    binding.apply {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+            }
         }
     }
 }

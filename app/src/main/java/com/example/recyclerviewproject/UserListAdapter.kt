@@ -7,13 +7,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewproject.databinding.UserItemBinding
 
 class UserListAdapter : RecyclerView.Adapter<UserListAdapter.UserItemHolder>() {
-    private var userList: List<User> = listOf()
+
+    init {
+        userListAdapter = this
+    }
+
+    private var userList: List<UserWithId> = DataList.getList()
 
     class UserItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = UserItemBinding.bind(itemView)
 
-        fun bind(user: User) = with(binding){
-            textViewName.text = user.FirstName+" "+user.LastName
+        fun bind(user: UserWithId) = with(binding) {
+            textViewName.text = user.FirstName + " " + user.LastName
             textViewPhone.text = user.Phone
         }
 
@@ -30,8 +35,11 @@ class UserListAdapter : RecyclerView.Adapter<UserListAdapter.UserItemHolder>() {
         holder.bind(userList[position])
     }
 
-    public fun submitList(newList: List<User>){
-        userList = newList
-    }
+    companion object{
+        private var userListAdapter: UserListAdapter? = null
 
+        fun updateAdapter(){
+            userListAdapter?.notifyDataSetChanged()
+        }
+    }
 }
