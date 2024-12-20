@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
                     addButton.visibility = View.VISIBLE
                     resetButton.visibility = View.GONE
                     deleteButton.visibility = View.GONE
+
+                    adapter.resetChange()
                 }
             }
         }

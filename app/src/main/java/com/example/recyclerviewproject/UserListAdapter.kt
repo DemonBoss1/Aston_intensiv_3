@@ -62,6 +62,9 @@ class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
         editingMode = false
         notifyDataSetChanged()
     }
+    fun resetChange(){
+        changesItem.fill(false)
+    }
 }
 
 interface UserListAdapterListener {
