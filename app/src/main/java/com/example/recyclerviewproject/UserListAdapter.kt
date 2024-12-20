@@ -3,12 +3,15 @@ package com.example.recyclerviewproject
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewproject.UserListAdapter.UserItemHolder
 import com.example.recyclerviewproject.databinding.UserItemBinding
 
-class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
-    RecyclerView.Adapter<UserItemHolder>() {
+class UserListAdapter(
+    val userListAdapterListener: UserListAdapterListener
+) : RecyclerView.Adapter<UserItemHolder>() {
+    private lateinit var diffResult: DiffUtil.DiffResult
 
     private val userList: List<UserWithId> = DataList.userList
     private val changesItem by lazy {
@@ -39,9 +42,8 @@ class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
             if (editingMode) {
                 userListAdapterListener.changeItem(holder)
                 val position = holder.position
-                changesItem[position] =!changesItem[position]
-            }
-            else userListAdapterListener.onClickItem(holder)
+                changesItem[position] = !changesItem[position]
+            } else userListAdapterListener.onClickItem(holder)
         }
         return holder
     }
@@ -60,17 +62,23 @@ class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
 
     fun turnOfEditingMode() {
         editingMode = false
-        notifyDataSetChanged()
+        //notifyDataSetChanged()
         resetChange()
     }
-    fun resetChange(){
+
+    fun resetChange() {
         changesItem.fill(false)
     }
-    fun deleteItems(items: MutableList<UserWithId>) {
-        DataList.removeAll(items)
-        changesItem.removeAll{ it }
 
-        notifyDataSetChanged()
+    fun deleteItems(items: MutableList<UserWithId>) {
+        val oldList = userList.map { it.copy() }
+        changesItem.removeAll { it }
+        DataList.removeAll(items)
+
+        diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(oldList, userList))
+        diffResult.dispatchUpdatesTo(this)
+
+        //notifyDataSetChanged()
     }
 }
 
