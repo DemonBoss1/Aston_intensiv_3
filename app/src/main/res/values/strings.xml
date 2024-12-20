@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecyclerViewProject</string>
+    <string name="delete_text">Удалить</string>
 </resources>
