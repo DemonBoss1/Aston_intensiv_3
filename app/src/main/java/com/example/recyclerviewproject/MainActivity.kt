@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UserListAdapter
 
+    private val listForDeletion: MutableList<UserWithId> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,16 +29,27 @@ class MainActivity : AppCompatActivity() {
 
         create()
 
-        adapter = UserListAdapter(object :UserListAdapterListener{
+        adapter = UserListAdapter(object : UserListAdapterListener {
             override fun onClickItem(holder: UserListAdapter.UserItemHolder) {
                 transition(holder.savedUser!!.Id)
             }
 
-            override fun changeItem(holder: UserListAdapter.UserItemHolder) = with(holder.binding.checkBox){
-                isChecked = !isChecked
+            override fun changeItem(holder: UserListAdapter.UserItemHolder) {
+                with(holder.binding.checkBox) {
+                    isChecked = !isChecked
+                }
+                if(holder.savedUser!=null) {
+                    val foundUser = listForDeletion.find {
+                        it.Id == holder.savedUser!!.Id
+                    }
+                    if (foundUser == null) listForDeletion.add(holder.savedUser!!)
+                    else listForDeletion.remove(holder.savedUser!!)
+                }
+
+                Toast.makeText(this@MainActivity, listForDeletion.size.toString(), Toast.LENGTH_SHORT).show()
             }
 
-        } )
+        })
         binding.apply {
             userRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
             userRecyclerView.adapter = adapter
@@ -47,13 +60,15 @@ class MainActivity : AppCompatActivity() {
             }
             resetButton.setOnClickListener {
                 adapter.turnOfEditingMode()
-                binding.apply {
-                    addButton.visibility = View.VISIBLE
-                    resetButton.visibility = View.GONE
-                    deleteButton.visibility = View.GONE
+                editingModeOff()
 
-                    adapter.resetChange()
-                }
+                listForDeletion.clear()
+                adapter.resetChange()
+            }
+            deleteButton.setOnClickListener {
+                editingModeOff()
+
+                adapter.resetChange()
             }
         }
     }
@@ -63,17 +78,17 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.menu.user_list_menu, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete -> {
                 adapter.enableEditingMode()
                 binding.apply {
-                    addButton.visibility = View.GONE
-                    resetButton.visibility = View.VISIBLE
-                    deleteButton.visibility = View.VISIBLE
+                    editingModeOn()
                 }
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -109,6 +124,22 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+        }
+    }
+
+    fun editingModeOn() {
+        binding.apply {
+            addButton.visibility = View.GONE
+            resetButton.visibility = View.VISIBLE
+            deleteButton.visibility = View.VISIBLE
+        }
+    }
+
+    fun editingModeOff() {
+        binding.apply {
+            addButton.visibility = View.VISIBLE
+            resetButton.visibility = View.GONE
+            deleteButton.visibility = View.GONE
         }
     }
 }
