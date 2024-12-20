@@ -61,9 +61,16 @@ class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
     fun turnOfEditingMode() {
         editingMode = false
         notifyDataSetChanged()
+        resetChange()
     }
     fun resetChange(){
         changesItem.fill(false)
+    }
+    fun deleteItems(items: MutableList<UserWithId>) {
+        DataList.removeAll(items)
+        changesItem.removeAll{ it }
+
+        notifyDataSetChanged()
     }
 }
 

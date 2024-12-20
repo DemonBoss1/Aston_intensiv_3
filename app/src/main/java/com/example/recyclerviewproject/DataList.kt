@@ -17,5 +17,8 @@ class DataList {
         fun addUser(user: UserWithId) {
             dataList.userList.add(user)
         }
+        fun removeAll(items: MutableList<UserWithId>) {
+            dataList.userList.removeAll(items)
+        }
     }
 }

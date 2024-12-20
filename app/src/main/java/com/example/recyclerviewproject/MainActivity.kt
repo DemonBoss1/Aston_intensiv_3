@@ -45,8 +45,6 @@ class MainActivity : AppCompatActivity() {
                     if (foundUser == null) listForDeletion.add(holder.savedUser!!)
                     else listForDeletion.remove(holder.savedUser!!)
                 }
-
-                Toast.makeText(this@MainActivity, listForDeletion.size.toString(), Toast.LENGTH_SHORT).show()
             }
 
         })
@@ -63,12 +61,12 @@ class MainActivity : AppCompatActivity() {
                 editingModeOff()
 
                 listForDeletion.clear()
-                adapter.resetChange()
             }
             deleteButton.setOnClickListener {
+                adapter.turnOfEditingMode()
                 editingModeOff()
 
-                adapter.resetChange()
+                adapter.deleteItems(listForDeletion)
             }
         }
     }
