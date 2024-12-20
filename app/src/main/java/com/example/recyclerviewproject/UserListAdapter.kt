@@ -7,10 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewproject.UserListAdapter.UserItemHolder
 import com.example.recyclerviewproject.databinding.UserItemBinding
 
-class UserListAdapter(val userListAdapterListener:UserListAdapterListener) :
+class UserListAdapter(val userListAdapterListener: UserListAdapterListener) :
     RecyclerView.Adapter<UserItemHolder>() {
 
-    private var userList: List<UserWithId> = DataList.userList
+    private val userList: List<UserWithId> = DataList.userList
+    private val changesItem by lazy {
+        userList.map {
+            false
+        }.toMutableList()
+    }
     private var editingMode = false
 
     class UserItemHolder(val binding: UserItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -20,7 +25,7 @@ class UserListAdapter(val userListAdapterListener:UserListAdapterListener) :
             savedUser = user
             textViewName.text = user.FirstName + " " + user.LastName
             textViewPhone.text = user.Phone
-            if(editingMode) checkBox.visibility = View.VISIBLE
+            if (editingMode) checkBox.visibility = View.VISIBLE
             else checkBox.visibility = View.GONE
         }
 
@@ -31,7 +36,11 @@ class UserListAdapter(val userListAdapterListener:UserListAdapterListener) :
         val binding = UserItemBinding.inflate(inflater, parent, false)
         val holder = UserItemHolder(binding)
         binding.root.setOnClickListener {
-            if(editingMode) userListAdapterListener.changeItem(holder)
+            if (editingMode) {
+                userListAdapterListener.changeItem(holder)
+                val position = holder.position
+                changesItem[position] =!changesItem[position]
+            }
             else userListAdapterListener.onClickItem(holder)
         }
         return holder
@@ -41,19 +50,21 @@ class UserListAdapter(val userListAdapterListener:UserListAdapterListener) :
 
     override fun onBindViewHolder(holder: UserItemHolder, position: Int) {
         holder.bind(userList[position], editingMode)
+        holder.binding.checkBox.isChecked = changesItem[position]
     }
 
-    fun enableEditingMode(){
+    fun enableEditingMode() {
         editingMode = true
         notifyDataSetChanged()
     }
-    fun turnOfEditingMode(){
+
+    fun turnOfEditingMode() {
         editingMode = false
         notifyDataSetChanged()
     }
 }
 
-interface  UserListAdapterListener{
+interface UserListAdapterListener {
     fun onClickItem(holder: UserItemHolder)
     fun changeItem(holder: UserItemHolder)
 }
