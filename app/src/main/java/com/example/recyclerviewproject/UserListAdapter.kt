@@ -4,19 +4,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recyclerviewproject.UserListAdapter.UserItemHolder
 import com.example.recyclerviewproject.databinding.UserItemBinding
 
-class UserListAdapter(val onClick: (holder: UserItemHolder) -> Any) :
-    RecyclerView.Adapter<UserListAdapter.UserItemHolder>() {
+class UserListAdapter(val userListAdapterListener:UserListAdapterListener) :
+    RecyclerView.Adapter<UserItemHolder>() {
 
     private var userList: List<UserWithId> = DataList.userList
     private var editingMode = false
 
     class UserItemHolder(val binding: UserItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        var id = -1
+        var savedUser: UserWithId? = null
 
         fun bind(user: UserWithId, editingMode: Boolean) = with(binding) {
-            id = user.Id
+            savedUser = user
             textViewName.text = user.FirstName + " " + user.LastName
             textViewPhone.text = user.Phone
             if(editingMode) checkBox.visibility = View.VISIBLE
@@ -30,7 +31,8 @@ class UserListAdapter(val onClick: (holder: UserItemHolder) -> Any) :
         val binding = UserItemBinding.inflate(inflater, parent, false)
         val holder = UserItemHolder(binding)
         binding.root.setOnClickListener {
-            onClick(holder)
+            if(editingMode) userListAdapterListener.changeItem(holder)
+            else userListAdapterListener.onClickItem(holder)
         }
         return holder
     }
@@ -49,4 +51,9 @@ class UserListAdapter(val onClick: (holder: UserItemHolder) -> Any) :
         editingMode = false
         notifyDataSetChanged()
     }
+}
+
+interface  UserListAdapterListener{
+    fun onClickItem(holder: UserItemHolder)
+    fun changeItem(holder: UserItemHolder)
 }

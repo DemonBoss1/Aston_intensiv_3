@@ -27,9 +27,16 @@ class MainActivity : AppCompatActivity() {
 
         create()
 
-        adapter = UserListAdapter{
-            transition(it.id)
-        }
+        adapter = UserListAdapter(object :UserListAdapterListener{
+            override fun onClickItem(holder: UserListAdapter.UserItemHolder) {
+                transition(holder.savedUser!!.Id)
+            }
+
+            override fun changeItem(holder: UserListAdapter.UserItemHolder) = with(holder.binding.checkBox){
+                isChecked = !isChecked
+            }
+
+        } )
         binding.apply {
             userRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
             userRecyclerView.adapter = adapter
