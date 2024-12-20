@@ -1,6 +1,7 @@
 package com.example.recyclerviewproject
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -8,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerviewproject.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -35,8 +37,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun changeItem(holder: UserListAdapter.UserItemHolder) {
-                with(holder.binding.checkBox) {
-                    isChecked = !isChecked
+                with(holder.binding) {
+                    checkBox.isChecked = !checkBox.isChecked
+                    if(checkBox.isChecked) root.setBackgroundColor(Color.LTGRAY)
+                    else root.setBackgroundColor(Color.WHITE)
                 }
                 if(holder.savedUser!=null) {
                     val foundUser = listForDeletion.find {

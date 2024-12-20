@@ -1,5 +1,6 @@
 package com.example.recyclerviewproject
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,12 +25,10 @@ class UserListAdapter(
     class UserItemHolder(val binding: UserItemBinding) : RecyclerView.ViewHolder(binding.root) {
         var savedUser: UserWithId? = null
 
-        fun bind(user: UserWithId, editingMode: Boolean) = with(binding) {
+        fun bind(user: UserWithId) = with(binding) {
             savedUser = user
             textViewName.text = user.FirstName + " " + user.LastName
             textViewPhone.text = user.Phone
-            if (editingMode) checkBox.visibility = View.VISIBLE
-            else checkBox.visibility = View.GONE
         }
 
     }
@@ -51,18 +50,20 @@ class UserListAdapter(
     override fun getItemCount() = userList.size
 
     override fun onBindViewHolder(holder: UserItemHolder, position: Int) {
-        holder.bind(userList[position], editingMode)
-        holder.binding.checkBox.isChecked = changesItem[position]
+        holder.bind(userList[position])
+        with(holder.binding){
+            checkBox.isChecked = changesItem[position]
+            if(checkBox.isChecked) root.setBackgroundColor(Color.LTGRAY)
+            else root.setBackgroundColor(Color.WHITE)
+        }
     }
 
     fun enableEditingMode() {
         editingMode = true
-        notifyDataSetChanged()
     }
 
     fun turnOfEditingMode() {
         editingMode = false
-        //notifyDataSetChanged()
         resetChange()
     }
 
@@ -77,8 +78,6 @@ class UserListAdapter(
 
         diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(oldList, userList))
         diffResult.dispatchUpdatesTo(this)
-
-        //notifyDataSetChanged()
     }
 }
 
